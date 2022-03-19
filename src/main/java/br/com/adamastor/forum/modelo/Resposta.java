@@ -16,11 +16,9 @@ public class Resposta {
 	private Long id;
 	private String mensagem;
 	private LocalDateTime dataCriacao = LocalDateTime.now();
-	private Boolean solucao = false;
-	
+	private Boolean solucao = false;	
 	@ManyToOne
-	private Topico topico;
-	
+	private Topico topico;	
 	@ManyToOne
 	private Usuario autor;
 	
