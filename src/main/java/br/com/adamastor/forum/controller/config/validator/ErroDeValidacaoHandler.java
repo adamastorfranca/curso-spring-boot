@@ -1,4 +1,4 @@
-package br.com.adamastor.forum.config.validacao;
+package br.com.adamastor.forum.controller.config.validator;
 
 import java.util.ArrayList;
 import java.util.List;

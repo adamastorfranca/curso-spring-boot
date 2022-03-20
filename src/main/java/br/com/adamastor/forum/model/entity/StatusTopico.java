@@ -1,4 +1,4 @@
-package br.com.adamastor.forum.modelo;
+package br.com.adamastor.forum.model.entity;
 
 public enum StatusTopico {
 	

@@ -1,4 +1,4 @@
-package br.com.adamastor.forum.modelo;
+package br.com.adamastor.forum.model.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

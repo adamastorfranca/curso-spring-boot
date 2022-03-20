@@ -1,12 +1,8 @@
-package br.com.adamastor.forum.controller.form;
+package br.com.adamastor.forum.model.form;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import br.com.adamastor.forum.modelo.Curso;
-import br.com.adamastor.forum.modelo.Topico;
-import br.com.adamastor.forum.repository.CursoRepository;
 
 public class TopicoForm {
 	
@@ -35,9 +31,9 @@ public class TopicoForm {
 	public void setNomeCurso(String nomeCurso) {
 		this.nomeCurso = nomeCurso;
 	}
-	public Topico converter(CursoRepository cursoRepository) {
-		Curso curso = cursoRepository.findByNome(nomeCurso);
-		return new Topico(titulo, mensagem, curso);
-	}
+//	public Topico converter(CursoRepository cursoRepository) {
+//		Curso curso = cursoRepository.findByNome(nomeCurso);
+//		return new Topico(titulo, mensagem, curso);
+//	}
 
 }
