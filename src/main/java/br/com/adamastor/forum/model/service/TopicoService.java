@@ -78,6 +78,7 @@ public class TopicoService {
 			Topico topico = resultado.get();
 			topicoRepository.delete(topico);
 		}
+		
 	}
 
 }

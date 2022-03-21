@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class TopicoRest {
 	private TopicoService topicoService;
 	
 	@PostMapping(value = "/cadastrar", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Transactional
 	public ResponseEntity<TopicoDTO> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
 		TopicoDTO dto = topicoService.cadastrar(form);
 		
@@ -43,6 +45,7 @@ public class TopicoRest {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Transactional
 	public ResponseEntity<TopicoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form) {
 		TopicoDTO dto = topicoService.atualizar(id, form);
 		
@@ -50,6 +53,7 @@ public class TopicoRest {
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Transactional
 	public ResponseEntity<?> deletar(@PathVariable Long id, UriComponentsBuilder uriBuilder) {
 		topicoService.deletar(id);
 		return ResponseEntity.ok().build(); 	
