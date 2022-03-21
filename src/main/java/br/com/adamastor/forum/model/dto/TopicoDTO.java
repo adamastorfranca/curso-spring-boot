@@ -22,16 +22,19 @@ public class TopicoDTO {
 		this.mensagem = topico.getMensagem();
 		this.dataCriacao = topico.getDataCriacao();
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
+
 	public String getTitulo() {
 		return titulo;
 	}
+
 	public String getMensagem() {
 		return mensagem;
 	}
+
 	public LocalDateTime getDataCriacao() {
 		return dataCriacao;
 	}

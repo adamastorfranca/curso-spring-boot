@@ -1,4 +1,4 @@
-package br.com.adamastor.forum.controller.config.validator;
+package br.com.adamastor.forum.controller.validator;
 
 public class ErroDeFormuliarioDto {
 	

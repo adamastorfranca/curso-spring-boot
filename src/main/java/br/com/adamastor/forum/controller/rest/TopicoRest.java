@@ -1,19 +1,30 @@
 package br.com.adamastor.forum.controller.rest;
 
 
+import java.net.URI;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.adamastor.forum.model.dto.DetalhesTopicoDTO;
 import br.com.adamastor.forum.model.dto.TopicoDTO;
+import br.com.adamastor.forum.model.form.AtualizacaoTopicoForm;
+import br.com.adamastor.forum.model.form.TopicoForm;
 import br.com.adamastor.forum.model.service.TopicoService;
 
 @RestController
@@ -22,7 +33,28 @@ public class TopicoRest {
 	
 	@Autowired
 	private TopicoService topicoService;
-
+	
+	@PostMapping(value = "/cadastrar", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<TopicoDTO> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
+		TopicoDTO dto = topicoService.cadastrar(form);
+		
+		URI uri = uriBuilder.path("rest/topicos/{id}").buildAndExpand(dto.getId()).toUri();
+		return ResponseEntity.created(uri).body(dto); 
+	}
+	
+	@PutMapping(value = "/atualizar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<TopicoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form) {
+		TopicoDTO dto = topicoService.atualizar(id, form);
+		
+		return ResponseEntity.ok(dto); 
+	}
+	
+	@DeleteMapping(value = "/deletar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> deletar(@PathVariable Long id, UriComponentsBuilder uriBuilder) {
+		topicoService.deletar(id);
+		return ResponseEntity.ok().build(); 	
+	}
+	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<List<TopicoDTO>> buscarTodosTopicos(){
 		List<TopicoDTO> dto = topicoService.buscarTodos();
@@ -35,7 +67,7 @@ public class TopicoRest {
 	
 	@GetMapping(value = "/buscarPorTitulo/{titulo}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<List<TopicoDTO>> buscarTopicoPorNome(@PathVariable String titulo){
-		List<TopicoDTO> dto = topicoService.buscarPorTitulo(titulo);
+		List<TopicoDTO> dto = topicoService.buscarTopicosPorTitulo(titulo);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -54,8 +86,8 @@ public class TopicoRest {
 	}
 	
 	@GetMapping(value = "/buscarPorId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<TopicoDTO> buscarTopicoPorId(@PathVariable Long id){
-		TopicoDTO dto = topicoService.buscarPorId(id);
+	public @ResponseBody ResponseEntity<DetalhesTopicoDTO> buscarTopicoPorId(@PathVariable Long id){
+		DetalhesTopicoDTO dto = topicoService.buscarPorId(id);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -72,12 +104,5 @@ public class TopicoRest {
 		}
 		return new ResponseEntity<>(dto, HttpStatus.OK);
 	}
-//	@PostMapping
-//	public ResponseEntity<TopicoDTO> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
-//		Topico topico = form.converter(cursoRepository);	
-//		topicoRepository.save(topico);
-//		
-//		URI uri = uriBuilder.path("topicos/{id}").buildAndExpand(topico.getId()).toUri();
-//		return ResponseEntity.created(uri).body(new TopicoDTO(topico)); 
-//	}
+
 }

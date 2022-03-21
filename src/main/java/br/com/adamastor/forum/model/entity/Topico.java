@@ -35,7 +35,6 @@ public class Topico {
 	}
 	
 	public Topico(String titulo, String mensagem, Curso curso) {
-		super();
 		this.titulo = titulo;
 		this.mensagem = mensagem;
 		this.curso = curso;

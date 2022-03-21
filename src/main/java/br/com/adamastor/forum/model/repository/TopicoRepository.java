@@ -8,8 +8,8 @@ import br.com.adamastor.forum.model.entity.Topico;
 
 public interface TopicoRepository extends CrudRepository<Topico, Long>{
 
-	List<Topico> findByTituloContainsIgnoreCase(String titulo);
-	List<Topico> findByCursoNomeContainsIgnoreCase(String nomeCurso);
-	List<Topico> findByUsuarioNomeContainsIgnoreCase(String nomeAutor);
+	List<Topico> findByTituloContains(String titulo);
+	List<Topico> findByCursoNomeContains(String nomeCurso);
+	List<Topico> findByAutorNomeContains(String nomeAutor);
 	
 }
