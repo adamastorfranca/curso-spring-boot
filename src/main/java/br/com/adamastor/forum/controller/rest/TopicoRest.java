@@ -7,6 +7,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,7 +37,7 @@ public class TopicoRest {
 	private TopicoService topicoService;
 	
 	@PostMapping(value = "/cadastrar", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TopicoDTO> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
+	public @ResponseBody ResponseEntity<TopicoDTO> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
 		TopicoDTO dto = topicoService.cadastrar(form);
 		
 		URI uri = uriBuilder.path("rest/topicos/{id}").buildAndExpand(dto.getId()).toUri();
@@ -43,7 +45,7 @@ public class TopicoRest {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TopicoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form) {
+	public @ResponseBody ResponseEntity<TopicoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form) {
 		TopicoDTO dto = topicoService.atualizar(id, form);
 
 		if (dto == null) {
@@ -53,7 +55,7 @@ public class TopicoRest {
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<?> deletar(@PathVariable Long id, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<?> deletar(@PathVariable Long id) {
 		boolean resultado = topicoService.deletar(id);
 		
 		if (resultado == false) {
@@ -63,8 +65,8 @@ public class TopicoRest {
 	}
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<List<TopicoDTO>> buscarTodosTopicos(){
-		List<TopicoDTO> dto = topicoService.buscarTodos();
+	public @ResponseBody ResponseEntity<Page<TopicoDTO>> buscarTodosTopicos(@RequestParam int pagina, @RequestParam int qnt, @RequestParam String ordenacao){
+		Page<TopicoDTO> dto = topicoService.buscarTodos(pagina, qnt, ordenacao);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -83,8 +85,8 @@ public class TopicoRest {
 	}
 	
 	@GetMapping(value = "/buscarPorCurso/{nomeCurso}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<List<TopicoDTO>> buscarTopicoPorCurso(@PathVariable String nomeCurso){
-		List<TopicoDTO> dto = topicoService.buscarPorNomeCurso(nomeCurso);
+	public @ResponseBody ResponseEntity<Page<TopicoDTO>> buscarTopicoPorCurso(@PathVariable String nomeCurso, @RequestParam int pagina, @RequestParam int qnt, @RequestParam String ordenacao){
+		Page<TopicoDTO> dto = topicoService.buscarPorNomeCurso(nomeCurso, pagina, qnt, ordenacao);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);

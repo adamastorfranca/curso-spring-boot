@@ -3,6 +3,8 @@ package br.com.adamastor.forum.model.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+
 import br.com.adamastor.forum.model.entity.Usuario;
 
 public class UsuarioDTO {
@@ -34,5 +36,9 @@ public class UsuarioDTO {
 
 	public static List<UsuarioDTO> converter(List<Usuario> usuarios){
 		return usuarios.stream().map(UsuarioDTO::new).collect(Collectors.toList());
+	}
+	
+	public static Page<UsuarioDTO> converter(Page<Usuario> usuarios){
+		return usuarios.map(UsuarioDTO::new);
 	}
 }

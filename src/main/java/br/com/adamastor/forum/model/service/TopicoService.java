@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +27,10 @@ public class TopicoService {
 	@Autowired
 	private CursoRepository cursoRepository;
 
-	public List<TopicoDTO> buscarTodos() {
-		List<Topico> topicos = (List<Topico>) topicoRepository.findAll();
+	public Page<TopicoDTO> buscarTodos(int pagina, int qnt, String ordenacao) {
+		Pageable paginacao = PageRequest.of(pagina, qnt, Direction.ASC, ordenacao);
+		
+		Page<Topico> topicos = topicoRepository.findAll(paginacao);
 		return TopicoDTO.converter(topicos);
 	}
 
@@ -38,8 +44,10 @@ public class TopicoService {
 		return null;
 	}
 
-	public List<TopicoDTO> buscarPorNomeCurso(String nomeCurso) {
-		List<Topico> topicos = topicoRepository.findByCursoNomeContains(nomeCurso);
+	public Page<TopicoDTO> buscarPorNomeCurso(String nomeCurso, int pagina, int qnt, String ordenacao) {
+		Pageable paginacao = PageRequest.of(pagina, qnt, Direction.ASC, ordenacao);
+		
+		Page<Topico> topicos = topicoRepository.findByCursoNomeContains(nomeCurso, paginacao);
 		return TopicoDTO.converter(topicos);
 	}
 

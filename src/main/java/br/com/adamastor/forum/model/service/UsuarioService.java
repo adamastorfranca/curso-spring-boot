@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +53,10 @@ public class UsuarioService {
 		return null;
 	}
 	
-	public List<UsuarioDTO> buscarTodos(){
-		List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+	public Page<UsuarioDTO> buscarTodos(int pagina, int qnt, String ordenacao){
+		Pageable paginacao = PageRequest.of(pagina, qnt, Direction.ASC, ordenacao);
+		
+		Page<Usuario> usuarios = usuarioRepository.findAll(paginacao);
 		return UsuarioDTO.converter(usuarios);
 	}
 	
