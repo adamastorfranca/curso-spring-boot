@@ -3,6 +3,8 @@ package br.com.adamastor.forum.model.form;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import br.com.adamastor.forum.model.entity.Usuario;
 
 public class UsuarioForm {
@@ -33,6 +35,6 @@ public class UsuarioForm {
 		this.senha = senha;
 	}
 	public Usuario criarUsuario() {
-		return new Usuario(nome, email, senha);
+		return new Usuario(nome, email, new BCryptPasswordEncoder().encode(senha));
 	}
 }
