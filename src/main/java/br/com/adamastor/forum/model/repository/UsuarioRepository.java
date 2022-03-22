@@ -10,8 +10,8 @@ import br.com.adamastor.forum.model.entity.Usuario;
 
 public interface UsuarioRepository extends CrudRepository<Usuario, Long>{
 	
-	List<Usuario> findByNomeContains(String nome);
-	List<Usuario> findByEmailContains(String email);
 	Page<Usuario> findAll(Pageable paginacao);
+	Page<Usuario> findByNomeContains(String nome, Pageable paginacao);
+	List<Usuario> findByEmailContains(String email);
 
 }

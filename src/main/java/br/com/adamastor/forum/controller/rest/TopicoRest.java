@@ -7,7 +7,12 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -37,6 +41,7 @@ public class TopicoRest {
 	private TopicoService topicoService;
 	
 	@PostMapping(value = "/cadastrar", produces = MediaType.APPLICATION_JSON_VALUE)
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public @ResponseBody ResponseEntity<TopicoDTO> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
 		TopicoDTO dto = topicoService.cadastrar(form);
 		
@@ -45,6 +50,7 @@ public class TopicoRest {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public @ResponseBody ResponseEntity<TopicoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form) {
 		TopicoDTO dto = topicoService.atualizar(id, form);
 
@@ -55,6 +61,7 @@ public class TopicoRest {
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
+	@CacheEvict(value = "listaDeTopicos", allEntries = true)
 	public ResponseEntity<?> deletar(@PathVariable Long id) {
 		boolean resultado = topicoService.deletar(id);
 		
@@ -65,8 +72,9 @@ public class TopicoRest {
 	}
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Page<TopicoDTO>> buscarTodosTopicos(@RequestParam int pagina, @RequestParam int qnt, @RequestParam String ordenacao){
-		Page<TopicoDTO> dto = topicoService.buscarTodos(pagina, qnt, ordenacao);
+	@Cacheable(value = "listaDeTopicos")
+	public @ResponseBody ResponseEntity<Page<TopicoDTO>> buscarTodosTopicos(@PageableDefault(sort = "titulo", direction = Direction.ASC) Pageable paginacao){
+		Page<TopicoDTO> dto = topicoService.buscarTodos(paginacao);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -85,8 +93,8 @@ public class TopicoRest {
 	}
 	
 	@GetMapping(value = "/buscarPorCurso/{nomeCurso}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Page<TopicoDTO>> buscarTopicoPorCurso(@PathVariable String nomeCurso, @RequestParam int pagina, @RequestParam int qnt, @RequestParam String ordenacao){
-		Page<TopicoDTO> dto = topicoService.buscarPorNomeCurso(nomeCurso, pagina, qnt, ordenacao);
+	public @ResponseBody ResponseEntity<Page<TopicoDTO>> buscarTopicoPorCurso(@PathVariable String nomeCurso, Pageable paginacao){
+		Page<TopicoDTO> dto = topicoService.buscarPorNomeCurso(nomeCurso, paginacao);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);

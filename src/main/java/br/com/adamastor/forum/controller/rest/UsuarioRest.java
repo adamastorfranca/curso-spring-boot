@@ -6,7 +6,12 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,6 +38,7 @@ public class UsuarioRest {
 	private UsuarioService usuarioService;
 	
 	@PostMapping(value = "/cadastrar", produces = MediaType.APPLICATION_JSON_VALUE)
+	@CacheEvict(value = "listaDeUsuarios", allEntries = true)
 	public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody @Valid UsuarioForm form, UriComponentsBuilder uriBuilder){
 		UsuarioDTO dto = usuarioService.cadastrar(form);
 		
@@ -42,6 +47,7 @@ public class UsuarioRest {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@CacheEvict(value = "listaDeUsuarios", allEntries = true)
 	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioForm form){
 		UsuarioDTO dto = usuarioService.atualizar(id, form);
 		
@@ -52,6 +58,7 @@ public class UsuarioRest {
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
+	@CacheEvict(value = "listaDeUsuarios", allEntries = true)
 	public ResponseEntity<?> deletar(@PathVariable Long id){
 		boolean resultado = usuarioService.deletar(id);
 		
@@ -62,8 +69,9 @@ public class UsuarioRest {
 	}
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Page<UsuarioDTO>> buscarTodosUsuarios(@RequestParam int pagina, @RequestParam int qnt, @RequestParam String ordenacao){
-		Page<UsuarioDTO> dto = usuarioService.buscarTodos(pagina, qnt, ordenacao);
+	@Cacheable(value = "listaDeUsuarios")
+	public @ResponseBody ResponseEntity<Page<UsuarioDTO>> buscarTodosUsuarios(Pageable paginacao){
+		Page<UsuarioDTO> dto = usuarioService.buscarTodos(paginacao);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -72,8 +80,8 @@ public class UsuarioRest {
 	}
 	
 	@GetMapping(value = "/buscarPorNome/{nome}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<List<UsuarioDTO>> buscarUsuarioPorNome(@PathVariable String nome){
-		List<UsuarioDTO> dto = usuarioService.buscarPorNome(nome);
+	public @ResponseBody ResponseEntity<Page<UsuarioDTO>> buscarUsuarioPorNome(@PathVariable String nome, @PageableDefault(sort = "nome", direction = Direction.ASC) Pageable paginacao){
+		Page<UsuarioDTO> dto = usuarioService.buscarPorNome(nome, paginacao);
 		
 		if (dto == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
