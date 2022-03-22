@@ -41,7 +41,7 @@ public class TopicoForm {
 		this.nomeCurso = nomeCurso;
 	}
 	
-	public Topico converter(CursoRepository cursoRepository) {
+	public Topico buscarCursoCriarTopico(CursoRepository cursoRepository) {
 		Curso curso = cursoRepository.findByNome(nomeCurso);
 		return new Topico(titulo, mensagem, curso);
 	}

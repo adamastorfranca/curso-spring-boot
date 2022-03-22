@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.adamastor.forum.model.dto.UsuarioDTO;
 import br.com.adamastor.forum.model.entity.Usuario;
+import br.com.adamastor.forum.model.form.UsuarioForm;
 import br.com.adamastor.forum.model.repository.UsuarioRepository;
 
 @Service
@@ -15,6 +17,37 @@ public class UsuarioService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Transactional
+	public UsuarioDTO cadastrar(UsuarioForm form) {
+		Usuario usuario = form.criarUsuario();
+		usuarioRepository.save(usuario);
+		return new UsuarioDTO(usuario);
+	}
+	
+	@Transactional
+	public boolean deletar(Long id) {
+		Optional<Usuario> resultado = usuarioRepository.findById(id);
+		if(resultado.isPresent()) {
+			Usuario usuario = resultado.get();
+			usuarioRepository.delete(usuario);
+		}
+		return resultado.isPresent();
+	}
+	
+	@Transactional
+	public UsuarioDTO atualizar(Long id, UsuarioForm form) {
+		Optional<Usuario> resultado = usuarioRepository.findById(id);
+		if(resultado.isPresent()) {
+			Usuario usuario = resultado.get();
+			usuario.setNome(form.getNome());
+			usuario.setEmail(form.getEmail());
+			usuario.setSenha(form.getSenha());
+			usuarioRepository.save(usuario);
+			return new UsuarioDTO(usuario);
+		}
+		return null;
+	}
 	
 	public List<UsuarioDTO> buscarTodos(){
 		List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.adamastor.forum.model.dto.DetalhesTopicoDTO;
 import br.com.adamastor.forum.model.dto.TopicoDTO;
@@ -52,12 +53,14 @@ public class TopicoService {
 		return TopicoDTO.converter(topicos);
 	}
 
+	@Transactional
 	public TopicoDTO cadastrar(TopicoForm form) {
-		Topico topico = form.converter(cursoRepository);
+		Topico topico = form.buscarCursoCriarTopico(cursoRepository);
 		topicoRepository.save(topico);
 		return new TopicoDTO(topico);
 	}
 
+	@Transactional
 	public TopicoDTO atualizar(Long id, AtualizacaoTopicoForm form) {
 		Optional<Topico> resultado = topicoRepository.findById(id);
 
@@ -71,14 +74,15 @@ public class TopicoService {
 		return null;
 	}
 
-	public void deletar(Long id) {
+	@Transactional
+	public boolean deletar(Long id) {
 		Optional<Topico> resultado = topicoRepository.findById(id);
 
 		if (resultado.isPresent()) {
 			Topico topico = resultado.get();
 			topicoRepository.delete(topico);
 		}
-		
+		return resultado.isPresent();
 	}
 
 }
