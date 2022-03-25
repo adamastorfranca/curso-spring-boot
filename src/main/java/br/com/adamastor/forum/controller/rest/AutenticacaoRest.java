@@ -36,10 +36,6 @@ public class AutenticacaoRest {
 			return ResponseEntity.ok(new TokenDTO(token, "Bearer"));
 		} catch (AuthenticationException e) {
 			return ResponseEntity.badRequest().build();
-		}
-		
-		
+		}	
 	}
-	
-
 }
